@@ -1,5 +1,6 @@
 public class Neuron{
   float [] weights = new float [2];
+  float learningrate = 0.0000001;
   
   
   //constructor
@@ -9,7 +10,7 @@ public class Neuron{
     }
   }
   
-  int guess(float[] inputs){
+  float guess(float[] inputs){
     float sum = 0;
     
     for(int i = 0; i < weights.length; i++){
@@ -29,5 +30,16 @@ public class Neuron{
       
       return -1;
     }
+  }
+  
+  float train(float[] inputs, int target){
+      float guess = guess(inputs);
+      float error = target - guess;
+      
+      for(int i = 0; i < weights.length; i++){
+        weights[i] += error*inputs[i]*learningrate;
+      }
+      
+      return error;
   }
 }
