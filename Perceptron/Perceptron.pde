@@ -10,6 +10,7 @@ void setup() {
   //float[] inputs = {-1, 0.5};
   //float guess = n.guess(inputs);
 
+
   for (int i = 0; i < points.length; i++) {
     points[i] = new Point(new PVector(random(-width/2, width/2), random(-height/2, height/2)));
   }
