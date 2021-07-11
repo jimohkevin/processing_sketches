@@ -32,7 +32,7 @@ void setup() {
   
   //generates desired shape as points in a matrix
   for (float i = 0; i <= 10000; i++) {
-    float tempArray[] = new float[]{cos(radians(i)), sin(radians(i)), asin(sin(i))};
+    float tempArray[] = new float[]{cos(radians(i)), sin(radians(i)), i};
 
     points.add(tempArray);
     originalPoints.add(tempArray);

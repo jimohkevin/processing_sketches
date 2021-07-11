@@ -1,90 +1,132 @@
+ArrayList<PImage> bgs = new ArrayList<PImage>();
+
 ArrayList<Particle> particles = new ArrayList<Particle>();
 
-float xBounds[], yBounds[], zBounds[];
-int s = 10;
-PVector gForce;
+FlowField f;
+
+int resolution = 1000;
+
+int counter = 0, time = 0;
+
+boolean fieldShowing = false;
+
+
 
 void setup() {
-  size(1000, 1000);
+  size(600, 400);
 
-  xBounds = new float[]{0, width};
-  yBounds = new float[]{0, height};
+  f = new FlowField(resolution);
+  loadImages();
 
-  //initializes particles in a grid
-  for (float i = 0; i < 750; i++) {
-
-    particles.add(new Particle(new PVector(random(s, width-s), random(s, height-s), random(-width/2+s, width/2-s)), s));
-  }
-  //print(particles.size());
-
-  //configures particle settings
-  for (int i = 0; i < particles.size(); i++) {
-    particles.get(i).id = i;
-    particles.get(i).setZ(new float[]{-width/2, width/2});
-    particles.get(i).xBounds = xBounds;
-    particles.get(i).yBounds = yBounds;
-
-    particles.get(i).internalResistance = 1;
+  //resizes background images to fit
+  for (PImage img : bgs) {
+    img.resize(width, height);
   }
 }
 
 void draw() {
-  background(255);
-  //noStroke();
-  for (Particle particle : particles) {
-    particle.update();
-    particle.display();
 
+  //shifts everything to near cartesian
 
+  pushMatrix();
+  translate(width/2, height/2);
 
-    if (mousePressed)
-      particle.applyForce(particle.pos.copy().sub(new PVector(mouseX, mouseY, 0)).normalize().mult(-0.7));
+  background(bgs.get(counter));
 
-    for (Particle part2 : particles) {
-      //Particle part1 = particle;
+  slideShowTimer(20000);
 
-      //PVector pos1 = part1.pos.copy();
-      //PVector pos2 = part2.pos.copy();
+  fill(255);
+  //strokeWeight(0.5);
 
-      //PVector radVec = pos1.sub(pos2); 
-      //PVector radVecSQ = new PVector(radVec.x*abs(radVec.x), radVec.y*abs(radVec.y), radVec.z*abs(radVec.z));
+  if (fieldShowing) {
+    //stroke(0);
+    f.display();
+  }
 
-      ////radVec.mult(10);
+  strokeWeight(1);
+  for (Particle p : particles) {
+    fill(255);
+    p.display();
+    p.update();
+    p.vel.limit(2);
 
+    for (int i = 0; i < f.forceVectors.size(); i++) {
+      ForceVector fv = f.forceVectors.get(i);
+      float dist = dist(p.pos.x, p.pos.y, fv.pos.x, fv.pos.y);
 
-      //float gConstant = 1;
-
-      //gForce = new PVector(1/radVecSQ.x, 1/radVecSQ.y, 1/radVecSQ.z);
-      //gForce.mult(part1.s*gConstant);
-      //gForce.normalize();
-
-      //gForce.mult(0.01);
-
-      if (particle.id != part2.id) {
-        //part2.applyForce(gForce);
-        //print(degrees(PVector.angleBetween(particle.pos, part2.pos)) + "\n");
+      if (dist >= 1) {
+        p.applyForce(fv.force.copy().div(sq(dist)).mult(2));
       }
     }
   }
-  //noLoop();
 
 
 
-  //interactions between particles
+  if (mousePressed) {
+    int pLength = particles.size();
 
-  for (int i = 0; i < particles.size(); i++) {
+    particles.add(new Particle(new PVector(mouseX-width/2, mouseY-height/2), random(5, 75)));
+
+    //settings
+    particles.get(pLength).xBounds = new float []{-width/2, width/2};
+    particles.get(pLength).yBounds = new float []{-height/2, height/2};
+    particles.get(pLength).trailSize = 16;
+    particles.get(pLength).col = color(random(110, 220), random(80, 220), random(110, 255));
+    //particles.get(pLength).drag = 0.99;
   }
-  //noLoop();
 
+  popMatrix();
+}
 
+void keyPressed() {
+  keysPressed();
+}
 
+void loadImages() {
+  bgs.add(loadImage("https://i.pinimg.com/originals/25/dd/05/25dd05996e495781ab23252c936fa734.jpg"));
+  bgs.add(loadImage("https://wallpapers.com/images/high/4k-ultra-hd-sci-fi-wallpaper-and-background-image-xt5ockd1zxbax8xp.jpg"));
+  bgs.add(loadImage("https://www.cheatsheet.com/wp-content/uploads/2021/06/Rick-and-Morty-Season-4-Rick-Sanchez.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/free-download-sci-fi-countryside-painting-city-resolution-full-hd-wallpaper1617364783.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/vector-sci-fi-hd-wallpaper-and-background-image1617364753.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/dark-world-sci-fi-wallpaper-download-free-full-hd-background1617364608.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/beatiful-vintage-sci-fi-wallpaper-for-desktop1617364563.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/retro-sci-fi-battle-space-ship-wallpaper1617363724.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/nature-landscape-wallpaper-and-backgrounds1617363518.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/dark-fantasy-retro-sci-fi-wallpaper1617363472.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/cartoon-vintage-sci-fi-hd-wallpaper1617363449.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/fantastic-retro-sci-fi-artist-4k-wallpaper-image1617363424.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/movie-retro-sci-fi-wallpaper-fantasy1617363404.jpg"));
+  bgs.add(loadImage("https://www.picgaga.com/uploads/wallpaper/retro-sci-fi/blue-dark-retro-sci-fi-wallpaper-for-mobile1617363348.jpg"));
+}
 
+void slideShowTimer(float sec) {
+  if (millis() - time > sec) {
+    counter = floor(random(bgs.size()));
+    time = millis();
 
+    if (counter > bgs.size()-1) {
+      counter = 0;
+    }
+  }
+}
 
-  if (keyPressed && key == 'w') {
-    //resets the sketch
+void keysPressed() {
+  if (key == 'r') {
+    for (Particle p : particles) {
+      p.pos = new PVector(random(-width/2, width/2), random(-height/2, height/2));
+    }
+  }
+  if (key == 'f') {
+    if (fieldShowing == true)
+      fieldShowing = false;
+    else
+      fieldShowing = true;
+  }
 
+  if (key == 'c')
     particles.clear();
-    setup();
+    
+  if (key == 'u'){
+    
   }
 }
