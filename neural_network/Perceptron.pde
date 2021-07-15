@@ -39,37 +39,67 @@ public class Perceptron {
 
     if (this.activationType == "sigmoid") {
       output = 1/(1+pow(exp(1), -n));
-      
     } else if (this.activationType == "posOrNeg") {
       if (n > 0) {
         output = 1;
       } else { 
         output = -1;
       }
-    } else if (this.activationType == "discreet"){
-      if(n >= 0){
+    } else if (this.activationType == "discreet") {
+      if (n >= 0) {
         output = 1;
       } else {
         output = 0;
       }
     }
-    
+
     return output;
   }
 
-  float train(float[] inputs, int target) {
-    float guess = guess(inputs);
-    float error = target - guess;
+  float[] assignError(float[] inputs, float error) {
+    //this.train(inputs, error, "NN");
+
+    float[] outputs = new float[weights.size()];
+    float totalWeight = 0;
 
     for (int i = 0; i < weights.size(); i++) {
-      float w = weights.get(i)/totalWeight;
-      if (i < weights.size()-1) {
-        weights.set(i, weights.get(i) + error*inputs[i]*learningrate);
-      } else {
-        weights.set(i, weights.get(i) + error*learningrate);
-      }
+      totalWeight += weights.get(i);
+    }
+    for (int i = 0; i < weights.size(); i++) {
+      outputs[i] = weights.get(i)/totalWeight*error;
     }
 
-    return error;
+    return outputs;
+  }
+
+
+  float train(float[] inputs, float target, String use) {
+    if (use == "NN") {
+      float error = target;
+
+      for (int i = 0; i < weights.size(); i++) {
+        if (i < weights.size()-1) {
+          weights.set(i, weights.get(i) + error*inputs[i]*learningrate);
+        } else {
+          weights.set(i, weights.get(i) + error*learningrate);
+        }
+      }
+
+      return error;
+    } else {
+      float guess = guess(inputs);
+      float error = target - guess;
+
+      for (int i = 0; i < weights.size(); i++) {
+
+        if (i < weights.size()-1) {
+          weights.set(i, weights.get(i) + error*inputs[i]*learningrate);
+        } else {
+          weights.set(i, weights.get(i) + error*learningrate);
+        }
+      }
+
+      return error;
+    }
   }
 }

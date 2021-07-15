@@ -1,5 +1,4 @@
 Layer i, o;
-Perceptron n;
 
 ArrayList<Point> points = new ArrayList<Point>();
 
@@ -9,11 +8,9 @@ int num = 500;
 void setup() {
   size(600, 600);
 
-  i = new Layer(2, 2);
-  o = new Layer(1, 2);
-
-  n = new Perceptron(5);
-
+  i = new Layer(2, 5);
+  o = new Layer(1, 5);
+  
   for (float i = -width/2; i < width/2; i += width/sqrt(num)) {
     for (float j = -height/2; j < height/2; j += height/sqrt(num)) {
       points.add(new Point(new PVector(i, j), random(15, 20)));
@@ -36,7 +33,8 @@ void draw() {
   grid();
 
   if (needsTraining) {
-    println(training());
+    ///println(training());
+    training();
   }
 
   noFill();
@@ -44,8 +42,9 @@ void draw() {
 
   for (Point p : points) {
     float[] inputs = {p.pos.x, p.pos.y, dist(p.pos.x, p.pos.y, trainingPt.pos.x, trainingPt.pos.y), trainingPt.pos.x, trainingPt.pos.y};
-
-    float guess = n.guess(inputs);
+    
+    float guess = o.guess(inputs)[0];
+    
 
     if (guess == 1) {
       fill(255);
@@ -100,7 +99,7 @@ ArrayList generateTrainingData() {
       target = 1;
     } else {
       //fill(0);
-      target = 0;
+      target = -1;
     }
 
     trainingDataSet.add(new TrainingData(new PVector(p.pos.x, p.pos.y), dist, target));
@@ -131,15 +130,20 @@ float training() {
   for (TrainingData d : t) {
     //stores the position data in proper format
     float[] inputs = {d.pos.x, d.pos.y, d.dist, trainingPt.pos.x, trainingPt.pos.y};
-
-    currentGuess = n.train(inputs, d.target);
+    
+    float[] inputGuesses = i.guess(inputs);
+    
+    float outputError = o.train(inputs, d.target);
+    float inputLayerError = i.train(inputs, d.target);
+    
+    currentGuess = o.guess(inputs)[0];
 
     guessData += currentGuess;
 
-    if (currentGuess > 0) {
-      fill(255, 0, 0);
-    } else {
+    if (outputError == 0) {
       fill(0, 255, 0);
+    } else {
+      fill(255, 0, 0);
     }
 
     ellipse(d.pos.x, d.pos.y, 20, 20);

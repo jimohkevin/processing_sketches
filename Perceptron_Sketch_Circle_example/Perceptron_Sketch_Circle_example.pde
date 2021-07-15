@@ -12,7 +12,7 @@ void setup() {
   i = new Layer(2, 2);
   o = new Layer(1, 2);
 
-  n = new Perceptron(5);
+  n = new Perceptron(2);
 
   for (float i = -width/2; i < width/2; i += width/sqrt(num)) {
     for (float j = -height/2; j < height/2; j += height/sqrt(num)) {
@@ -92,16 +92,18 @@ ArrayList generateTrainingData() {
   //}
   for (Point p : points) {
     int target;
-    float dist = dist(p.pos.x, p.pos.y, trainingPt.pos.x, trainingPt.pos.y);
+    //float dist = dist(p.pos.x, p.pos.y, trainingPt.pos.x, trainingPt.pos.y);
 
     //generates training data
-    if (dist <= trainingPt.s/2) {
+    if (p.pos.y >= 2*p.pos.x) {
       //fill(255);
       target = 1;
     } else {
       //fill(0);
-      target = 0;
+      target = -1;
     }
+    
+    dist = dist(trainingPt.pos.x, trainingPt.pos.y, p.pos.x, p.pos.y);
 
     trainingDataSet.add(new TrainingData(new PVector(p.pos.x, p.pos.y), dist, target));
   }
@@ -130,7 +132,7 @@ float training() {
 
   for (TrainingData d : t) {
     //stores the position data in proper format
-    float[] inputs = {d.pos.x, d.pos.y, d.dist, trainingPt.pos.x, trainingPt.pos.y};
+    float[] inputs = {d.pos.x, d.pos.y, d.};
 
     currentGuess = n.train(inputs, d.target);
 

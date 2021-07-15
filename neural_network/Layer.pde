@@ -1,6 +1,6 @@
 public class Layer {
   int numNodes, axions;
-  ArrayList<Perceptron> layer = new ArrayList<Perceptron>();
+  public ArrayList<Perceptron> layer = new ArrayList<Perceptron>();
   
   public Layer(int numNodes, int axions){
     //number of nodes equals number of inputs
@@ -16,20 +16,18 @@ public class Layer {
     }
   }
   
-  float train(float[] inputs, int target){
-    float error = 0;
+  float train(float error){
+    float totalWeight = 0;
     
     for(int i = 0; i < this.layer.size(); i++){
-      error += this.layer.get(i).train(inputs, target);
+      
     }
-    
-    error /= this.layer.size();
     
     return error;
   }
   
   float[] guess(float[] inputs){
-    float[] guesses = new float[inputs.length];
+    float[] guesses = new float[this.layer.size()];
     
     for(int i = 0; i < this.layer.size(); i++){
       guesses[i] = this.layer.get(i).guess(inputs);

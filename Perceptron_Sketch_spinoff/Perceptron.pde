@@ -1,6 +1,6 @@
 public class Perceptron {
   ArrayList<Float> weights = new ArrayList<Float>();
-  float learningrate = 0.01;
+  float learningrate = 0.001;
   int bias = 1;
   String activationType;
 
@@ -9,7 +9,7 @@ public class Perceptron {
     for (int i = 0; i < numInputs; i++) {
       weights.add(random(-1, 1));
     }
-    this.activationType = "discreet";
+    this.activationType = "posOrNeg";
 
     //adds the weight for the bias at the end of the list
     weights.add(random(-1, 1));
@@ -39,25 +39,24 @@ public class Perceptron {
 
     if (this.activationType == "sigmoid") {
       output = 1/(1+pow(exp(1), -n));
-      
     } else if (this.activationType == "posOrNeg") {
       if (n > 0) {
         output = 1;
       } else { 
         output = -1;
       }
-    } else if (this.activationType == "discreet"){
-      if(n >= 0){
+    } else if (this.activationType == "discreet") {
+      if (n >= 0) {
         output = 1;
       } else {
         output = 0;
       }
     }
-    
+
     return output;
   }
 
-  float train(float[] inputs, int target) {
+  float train(float[] inputs, float target) {
     float guess = guess(inputs);
     float error = target - guess;
 
