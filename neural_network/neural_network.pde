@@ -15,10 +15,10 @@ void setup() {
 
   n = new NeuralNetwork("Katherine");
 
-  n.addLayer(4, 10);
+  n.addLayer(6, 10);
   n.addLayer(10, 4);
   n.addLayer(4, 1);
-  n.setActivation("posOrNeg");
+  n.setActivation("sigmoid");
 
 
 
@@ -41,7 +41,7 @@ void draw() {
 
 
   for (Point p : points) {
-    float[] inputs = {p.pos.x, p.pos.y, trainingPt.pos.x, trainingPt.pos.y};
+    float[] inputs = {p.pos.x, p.pos.y, trainingPt.pos.x, trainingPt.pos.y, p.pos.x-trainingPt.pos.x, p.pos.y-trainingPt.pos.y};
     float[] targets = returnTarg(p);
     float[] guess = n.guess(inputs);
 
@@ -49,25 +49,27 @@ void draw() {
       float[] error = n.train(inputs, targets);
       float error1 = error[0];
 
-      if (error1 == 0) {
+      if (error1 <= 0.03) {
         fill(0, 255, 0);
       } else {
         fill(255, 0, 0);
       }
       p.show();
 
-      if (guess[0] == 1) {
+      if (guess[0] >= 0.95) {
         fill(255);
       } else {
         fill(0);
       }
 
       ellipse(p.pos.x, p.pos.y, p.s*0.4, p.s*0.4);
-      //println(error1);
-    } else {
-      
 
-      if (guess[0] == 1) {
+      if (error1 > 0.03)
+        println(error1);
+    } else {
+
+
+      if (guess[0] >= 0.95) {
         fill(255);
       } else {
         fill(0);
@@ -107,7 +109,7 @@ float[] returnTarg(Point p) {
   if (dist(p.pos.x, p.pos.y, trainingPt.pos.x, trainingPt.pos.y) <= trainingPt.s/2) {
     output1 = 1;
   } else {
-    output1 = -1;
+    output1 = 0;
   }
 
   float[] target = {output1};
