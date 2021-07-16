@@ -1,10 +1,11 @@
 public class Neuron{
-  float [] weights = new float [2];
+  float [] weights;
   float learningrate = 0.0000001;
   
   
   //constructor
-  public Neuron(){
+  public Neuron(int n){
+    this.weights = new float[n];
     for(int i = 0; i < weights.length; i++){
       weights[i] = random(-1, 1);
     }

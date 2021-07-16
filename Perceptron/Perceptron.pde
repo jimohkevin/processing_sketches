@@ -1,11 +1,11 @@
 Neuron n;
-int slope = -2;
+int slope = -2, intercept = 0;
 Point[] points = new Point[500];
 
 void setup() {
   size(600, 600);
 
-  n = new Neuron();
+  n = new Neuron(3);
 
   //float[] inputs = {-1, 0.5};
   //float guess = n.guess(inputs);
@@ -20,7 +20,7 @@ void draw() {
   background(255);
 
   for (Point p : points) {
-    float[] positions = {p.pos.x, p.pos.y};
+    float[] inputs = {p.pos.x, p.pos.y, 1};
     int target;
     
     //generates training data
@@ -32,7 +32,7 @@ void draw() {
       target = -1;
     }
     
-    float guessData = n.train(positions, target);
+    float guessData = n.train(inputs, target);
     
     if(guessData == 0){
       fill(0, 255, 0);
@@ -63,7 +63,7 @@ void draw() {
 
 float f(float x){
   
-  return slope*x;
+  return slope*x + intercept;
 }
 
 void mousePressed(){
@@ -71,4 +71,5 @@ void mousePressed(){
     points[i].pos = new PVector(random(-width/2, width/2), random(-height/2, height/2));
   }
   slope = int(random(-10,10));
+  intercept = int(random(-height/4, height/4));
 }
